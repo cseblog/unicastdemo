@@ -45,23 +45,25 @@ public class AsyncServer {
                             register(selector, serverSocketChannel);
                         } catch (IOException e) {
                             e.printStackTrace();
+                            break;
                         }
                     }
 
                     if (key.isReadable() | key.isWritable()) {
                         SocketChannel channel = (SocketChannel) key.channel();
-                        ByteBuffer inBuf = ByteBuffer.allocate(48);
-                        ByteBuffer outBuf = ByteBuffer.allocate(48);
-                        Runnable runnable = () -> {
+
+//                        Runnable runnable = () -> {
+                            ByteBuffer inBuf = ByteBuffer.allocate(48);
+                            ByteBuffer outBuf = ByteBuffer.allocate(48);
                             if (key.isReadable()) {
                                 try {
                                     inBuf.clear();
                                     channel.read(inBuf);
                                     inBuf.flip();
                                     System.out.println(new String(inBuf.array(), StandardCharsets.UTF_8));
-
                                 } catch (IOException e) {
                                     e.printStackTrace();
+                                    break;
                                 }
 
                                 // Write data back to the socket channel
@@ -75,13 +77,14 @@ public class AsyncServer {
                                             channel.write(outBuf);
                                         } catch (IOException e) {
                                             e.printStackTrace();
+                                            break;
                                         }
                                     }
                                 }
                             }
-                        };
+//                        };
 
-                        threadPool.execute(runnable);
+//                        threadPool.execute(runnable);
                     }
                     keyIterator.remove();
                 }
